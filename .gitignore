@@ -1,0 +1,30 @@
+# Ignore Carthage directories for libraries
+Carthage
+
+# OSX Noise
+.DS_Store
+
+# TextMate
+*.tmproj
+tmtags
+
+# Emacs
+*~
+
+# Appcode
+.idea/
+*.iml
+
+# XCode (and ancestors) per-user config (very noisy, and not relevant)
+*.mode1
+*.mode1v3
+*.mode2v3
+*.perspective
+*.perspectivev3
+*.pbxuser
+*.xcuserdatad
+project.xcworkspace/
+
+# Build folders
+build/
+
