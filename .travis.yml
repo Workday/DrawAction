@@ -1,5 +1,4 @@
 language: objective-c
 osx_image: xcode8
-xcode_project: DrawAction.xcodeproj
-xcode_scheme: DrawActionExample
-xcode_sdk: iphonesimulator
+script:
+    - xcodebuild build -scheme DrawActionExample -sdk iphonesimulator
