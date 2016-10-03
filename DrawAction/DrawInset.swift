@@ -10,7 +10,7 @@ import Foundation
 /// Action that insets the current rect for subsequent draw actions
 final public class DrawInset : DrawAction {
 
-    private let insets: UIEdgeInsets
+    fileprivate let insets: UIEdgeInsets
 
     /**
      Initializes a DrawInset
@@ -43,7 +43,7 @@ final public class DrawInset : DrawAction {
         self.init(insets: insets)
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         context.performDrawActions {
             context.rect = UIEdgeInsetsInsetRect(context.rect, insets)
             next?.performActionInContext(context)

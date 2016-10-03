@@ -16,12 +16,12 @@ import Foundation
  */
 final public class DrawTransparency : DrawAction {
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         context.performDrawAndGraphicsActions { gContext in
-            CGContextClipToRect(gContext, context.rect)
-            CGContextBeginTransparencyLayer(gContext, nil)
+            gContext.clip(to: context.rect)
+            gContext.beginTransparencyLayer(auxiliaryInfo: nil)
             next?.performActionInContext(context)
-            CGContextEndTransparencyLayer(gContext)
+            gContext.endTransparencyLayer()
         }
     }
 }

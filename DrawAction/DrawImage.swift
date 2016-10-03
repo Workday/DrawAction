@@ -10,10 +10,10 @@ import Foundation
 /// Action that draws the given UIImage
 final public class DrawImage : DrawAction {
 
-    private let image: UIImage
-    private let contentMode: UIViewContentMode
-    private let blendMode: CGBlendMode
-    private let alpha: CGFloat
+    fileprivate let image: UIImage
+    fileprivate let contentMode: UIViewContentMode
+    fileprivate let blendMode: CGBlendMode
+    fileprivate let alpha: CGFloat
 
     /**
      Initializes a DrawImage
@@ -38,20 +38,20 @@ final public class DrawImage : DrawAction {
      - parameter contentMode: The content mode to respect when performing the draw operation. Behavior is undefined if passed `.Redraw`
      */
     convenience public init(image: UIImage, contentMode: UIViewContentMode) {
-        self.init(image: image, contentMode: contentMode, blendMode: .Normal, alpha: 1)
+        self.init(image: image, contentMode: contentMode, blendMode: .normal, alpha: 1)
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         var rect = context.rect
         rect = rectForSize(image.size, inRect: rect, contentMode: contentMode)
         
         UIGraphicsPushContext(context.graphicsContext)
-        image.drawInRect(rect, blendMode: blendMode, alpha: alpha)
+        image.draw(in: rect, blendMode: blendMode, alpha: alpha)
         UIGraphicsPopContext()
         next?.performActionInContext(context)
     }
 
-    private func aspectRectForImageSize(size: CGSize, inRect rect: CGRect, fit: Bool) -> CGRect {
+    fileprivate func aspectRectForImageSize(_ size: CGSize, inRect rect: CGRect, fit: Bool) -> CGRect {
         
         let widthRatio = rect.width / size.width
         let heightRatio = rect.height / size.height
@@ -63,34 +63,34 @@ final public class DrawImage : DrawAction {
             ratioToUse = max(widthRatio, heightRatio)
         }
         
-        let newSize = CGSizeMake(size.width*ratioToUse, size.height*ratioToUse)
+        let newSize = CGSize(width: size.width*ratioToUse, height: size.height*ratioToUse)
         let newOrigin = CGPoint(x: rect.midX - (newSize.width / 2), y: rect.midY - (newSize.height / 2))
         
-        return CGRectIntegral(CGRect(origin: newOrigin, size: newSize))
+        return CGRect(origin: newOrigin, size: newSize).integral
     }
     
-    private func rectForSize(size: CGSize, inRect rect: CGRect, contentMode: UIViewContentMode) -> CGRect {
-        guard contentMode != .ScaleToFill else {
+    fileprivate func rectForSize(_ size: CGSize, inRect rect: CGRect, contentMode: UIViewContentMode) -> CGRect {
+        guard contentMode != .scaleToFill else {
             return rect
         }
         
-        guard contentMode != .ScaleAspectFit else {
+        guard contentMode != .scaleAspectFit else {
             return aspectRectForImageSize(size, inRect: rect, fit: true)
         }
         
-        guard contentMode != .ScaleAspectFill else {
+        guard contentMode != .scaleAspectFill else {
             return aspectRectForImageSize(size, inRect: rect, fit: false)
         }
         
-        var newRect = CGRect(origin: CGPointZero, size: size)
+        var newRect = CGRect(origin: CGPoint.zero, size: size)
         
         // X origin
         switch contentMode {
-        case .Top, .Center, .Bottom:
+        case .top, .center, .bottom:
             newRect.origin.x = rect.midX - (size.width / 2)
-        case .TopLeft, .Left, .BottomLeft:
+        case .topLeft, .left, .bottomLeft:
             newRect.origin.x = rect.minX
-        case .TopRight, .Right, .BottomRight:
+        case .topRight, .right, .bottomRight:
             newRect.origin.x = rect.maxX - size.width
         default:
             break // Other cases accounted for above
@@ -98,11 +98,11 @@ final public class DrawImage : DrawAction {
         
         // Y origin
         switch contentMode {
-        case .Left, .Center, .Right:
+        case .left, .center, .right:
             newRect.origin.y = rect.midY - (size.height / 2)
-        case .TopLeft, .Top, .TopRight:
+        case .topLeft, .top, .topRight:
             newRect.origin.y = rect.minY
-        case .BottomLeft, .Bottom, .BottomRight:
+        case .bottomLeft, .bottom, .bottomRight:
             newRect.origin.y = rect.maxY - size.height
         default:
             break // Other cases accounted for above

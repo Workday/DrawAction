@@ -10,8 +10,8 @@ import Foundation
 /// Action that renders text in the current rect
 final public class DrawText : DrawAction {
     
-    private let attributedText: NSAttributedString
-    private let drawingOptions: NSStringDrawingOptions
+    fileprivate let attributedText: NSAttributedString
+    fileprivate let drawingOptions: NSStringDrawingOptions
     
     /**
      Initializes a DrawText with the specified attributed string
@@ -31,7 +31,7 @@ final public class DrawText : DrawAction {
      - parameter attributedText: NSAttributedString to render
      */
     convenience public init(attributedText: NSAttributedString) {
-        self.init(attributedText: attributedText, drawOptions: [.UsesLineFragmentOrigin, .UsesFontLeading])
+        self.init(attributedText: attributedText, drawOptions: [.usesLineFragmentOrigin, .usesFontLeading])
     }
     
     /**
@@ -45,7 +45,7 @@ final public class DrawText : DrawAction {
      - parameter underlineStyle: Specifies how to underline the text
      */
     convenience public init(text: String, font: UIFont, color: UIColor, alignment: NSTextAlignment, lineBreakMode: NSLineBreakMode, underlineStyle: NSUnderlineStyle) {
-        let paragraphStyle: NSMutableParagraphStyle = NSParagraphStyle.defaultParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
+        let paragraphStyle: NSMutableParagraphStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
         paragraphStyle.lineBreakMode = lineBreakMode
         paragraphStyle.alignment = alignment
         
@@ -53,7 +53,7 @@ final public class DrawText : DrawAction {
             NSFontAttributeName : font,
             NSParagraphStyleAttributeName: paragraphStyle,
             NSForegroundColorAttributeName: color,
-            NSUnderlineStyleAttributeName: underlineStyle.rawValue
+            NSUnderlineStyleAttributeName: underlineStyle.rawValue as AnyObject
         ]
         
         self.init(attributedText: NSAttributedString(string: text, attributes: attributes))
@@ -69,7 +69,7 @@ final public class DrawText : DrawAction {
      - parameter lineBreakMode: Line break mode to use when rendering
      */
     convenience public init(text: String, font: UIFont, color: UIColor, alignment: NSTextAlignment, lineBreakMode: NSLineBreakMode) {
-        self.init(text: text, font: font, color: color, alignment: alignment, lineBreakMode: lineBreakMode, underlineStyle: .StyleNone)
+        self.init(text: text, font: font, color: color, alignment: alignment, lineBreakMode: lineBreakMode, underlineStyle: .styleNone)
     }
     
     /**
@@ -80,7 +80,7 @@ final public class DrawText : DrawAction {
      - parameter color: The color to stroke the font with
      */
     convenience public init(text: String, font: UIFont, color: UIColor) {
-        self.init(text: text, font: font, color: color, alignment: .Left, lineBreakMode: .ByWordWrapping)
+        self.init(text: text, font: font, color: color, alignment: .left, lineBreakMode: .byWordWrapping)
     }
     
     /**
@@ -90,17 +90,17 @@ final public class DrawText : DrawAction {
      - parameter font: The font to render the text with
      */
     convenience public init(text: String, font: UIFont) {
-        self.init(text: text, font: font, color: UIColor.blackColor())
+        self.init(text: text, font: font, color: UIColor.black)
     }
     
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         var textRect = context.rect
-        let textHeight = attributedText.boundingRectWithSize(textRect.size, options: self.drawingOptions, context:nil).height
+        let textHeight = attributedText.boundingRect(with: textRect.size, options: self.drawingOptions, context:nil).height
         
         textRect.origin.y += (textRect.size.height - textHeight) / 2
         context.performGraphicsActions { gContext in
             UIGraphicsPushContext(gContext)
-            attributedText.drawWithRect(CGRectIntegral(textRect), options: drawingOptions, context: nil)
+            attributedText.draw(with: textRect.integral, options: drawingOptions, context: nil)
             UIGraphicsPopContext()
         }
         next?.performActionInContext(context)

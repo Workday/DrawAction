@@ -10,7 +10,7 @@ import Foundation
 /// Action that applies a clip to all subsequent draw actions based on the current path or rect
 final public class DrawClip : DrawAction {
 
-    private let evenOddFill: Bool
+    fileprivate let evenOddFill: Bool
     /**
      Initializes a DrawClip
      
@@ -30,16 +30,16 @@ final public class DrawClip : DrawAction {
         super.init()
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         if !context.addPathToGraphicsContext() {
             context.addRectToGraphicsContext()
         }
 
         context.performGraphicsActions { gContext in
             if evenOddFill {
-                CGContextEOClip(gContext)
+                gContext.clip(using: .evenOdd)
             } else {
-                CGContextClip(gContext)
+                gContext.clip()
             }
             next?.performActionInContext(context)
         }

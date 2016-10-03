@@ -11,10 +11,10 @@ import Foundation
 /// Action that divides the current rect into two pieces, optionally applying a separate action chain to the 'slice' of the rect
 final public class DrawDivide : DrawAction {
 
-    private let amount: CGFloat
-    private let padding: CGFloat
-    private let edge: CGRectEdge
-    private let slice: DrawAction?
+    fileprivate let amount: CGFloat
+    fileprivate let padding: CGFloat
+    fileprivate let edge: CGRectEdge
+    fileprivate let slice: DrawAction?
     
     /**
      Initializes a DrawDivide. Any actions added after this one (via `add` or `chainActions`) will have their rect set to the remainder rect the results from the divide action.
@@ -53,7 +53,7 @@ final public class DrawDivide : DrawAction {
      */
     public convenience init(amount: CGFloat, edge: CGRectEdge, slice: DrawAction?, next: DrawAction) {
         self.init(amount: amount, edge: edge, slice: slice)
-        self.add(next)
+        let _ = self.add(next)
     }
 
     /**
@@ -67,19 +67,17 @@ final public class DrawDivide : DrawAction {
      */
     public convenience init(amount: CGFloat, padding: CGFloat, edge: CGRectEdge, slice: DrawAction?, next: DrawAction) {
         self.init(amount: amount, padding: padding, edge: edge, slice: slice)
-        self.add(next)
+        let _ = self.add(next)
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
 
         var sliceRect = CGRect()
         var remainderRect = CGRect()
-        CGRectDivide(context.rect, &sliceRect, &remainderRect, amount, edge)
+        (sliceRect, remainderRect) = context.rect.divided(atDistance: amount, from: edge)
         
         if self.padding > 0 {
-            // Throwaway padding rect
-            var paddingRect = CGRect()
-            CGRectDivide(remainderRect, &paddingRect, &remainderRect, padding, edge)
+            (_, remainderRect) = context.rect.divided(atDistance: padding, from: edge)
         }
         
         context.performDrawActions {
