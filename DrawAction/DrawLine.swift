@@ -68,7 +68,8 @@ final public class DrawLine : DrawAction {
             gContext.setLineCap(.square)
             gContext.setStrokeColor(color.cgColor)
             gContext.setLineWidth(lineWidth)
-            gContext.strokeLineSegments(between: points)
+            let convertedPoints = pointArrayForUnitPoints(points, inRect: context.rect)
+            gContext.strokeLineSegments(between: convertedPoints)
         }
         next?.performActionInContext(context)
     }

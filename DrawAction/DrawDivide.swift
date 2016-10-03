@@ -53,7 +53,7 @@ final public class DrawDivide : DrawAction {
      */
     public convenience init(amount: CGFloat, edge: CGRectEdge, slice: DrawAction?, next: DrawAction) {
         self.init(amount: amount, edge: edge, slice: slice)
-        let _ = self.add(next)
+        self.add(next)
     }
 
     /**
@@ -67,7 +67,7 @@ final public class DrawDivide : DrawAction {
      */
     public convenience init(amount: CGFloat, padding: CGFloat, edge: CGRectEdge, slice: DrawAction?, next: DrawAction) {
         self.init(amount: amount, padding: padding, edge: edge, slice: slice)
-        let _ = self.add(next)
+        self.add(next)
     }
 
     override func performActionInContext(_ context: DrawContext) {

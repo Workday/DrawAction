@@ -36,9 +36,9 @@ import Foundation
      
      - parameter newNext: The action to add to the chain
     */
-    open func add(_ newNext: DrawAction) -> DrawAction {
+    @discardableResult open func add(_ newNext: DrawAction) -> DrawAction {
         if let next = next {
-            let _ = next.add(newNext)
+            next.add(newNext)
         } else {
             next = newNext
         }

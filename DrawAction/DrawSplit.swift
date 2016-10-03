@@ -39,7 +39,7 @@ final public class DrawSplit : DrawAction {
      */
     convenience public init(split: DrawAction, next: DrawAction) {
         self.init(split: split)
-        let _ = self.add(next)
+        self.add(next)
     }
 
     override func performActionInContext(_ context: DrawContext) {
