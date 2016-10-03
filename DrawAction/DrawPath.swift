@@ -10,8 +10,8 @@ import Foundation
 /// Action that defines a new path for subsequent draw actions
 final public class DrawPath : DrawAction {
 
-    private let path: UIBezierPath?
-    private let pathGenerator: (CGSize -> UIBezierPath)?
+    fileprivate let path: UIBezierPath?
+    fileprivate let pathGenerator: ((CGSize) -> UIBezierPath)?
 
     // Passes in current size of context rect. Gets run at draw time
     /**
@@ -20,7 +20,7 @@ final public class DrawPath : DrawAction {
      - parameter pathGenerator: A closure that gets run at draw time. The size passed in is the size of the current rect. The return value should be a UIBezierPath. 
      The path should be defined relative to the rect with origin zero and the specified size. It then gets translated according to the current rect origin.
      */
-    public init(pathGenerator: CGSize -> UIBezierPath) {
+    public init(pathGenerator: @escaping (CGSize) -> UIBezierPath) {
         self.pathGenerator = pathGenerator
         path = nil
         super.init()
@@ -45,8 +45,8 @@ final public class DrawPath : DrawAction {
      */
     convenience public init(roundedCorners corners: UIRectCorner, radii: CGSize) {
         self.init(pathGenerator: { size in
-            let rect = CGRect(origin: CGPointZero, size: size)
-            return UIBezierPath(roundedRect:CGRectInset(rect, 0.5, 0.5), byRoundingCorners: corners, cornerRadii: radii)
+            let rect = CGRect(origin: CGPoint.zero, size: size)
+            return UIBezierPath(roundedRect:rect.insetBy(dx: 0.5, dy: 0.5), byRoundingCorners: corners, cornerRadii: radii)
         })
     }
 
@@ -56,7 +56,7 @@ final public class DrawPath : DrawAction {
      - parameter roundedRectRadius: The radius to use for all corners. So each corner will be quarter circles of the specified radius.
      */
     convenience public init(roundedRectRadius radius: CGFloat) {
-        self.init(roundedCorners: .AllCorners, radii: CGSize(width: radius, height: radius))
+        self.init(roundedCorners: .allCorners, radii: CGSize(width: radius, height: radius))
     }
 
     /**
@@ -64,7 +64,7 @@ final public class DrawPath : DrawAction {
      */
     override convenience public init() {
         self.init(pathGenerator: { size in
-            return UIBezierPath(rect: CGRect(origin: CGPointZero, size: size))
+            return UIBezierPath(rect: CGRect(origin: CGPoint.zero, size: size))
         })
     }
 
@@ -77,14 +77,14 @@ final public class DrawPath : DrawAction {
     convenience public init(oval: Bool) {
         if oval {
             self.init(pathGenerator: { size in
-                return UIBezierPath(ovalInRect: CGRect(origin: CGPointZero, size: size))
+                return UIBezierPath(ovalIn: CGRect(origin: CGPoint.zero, size: size))
             })
         } else {
             self.init()
         }
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         guard let path = pathGenerator?(context.rect.size) ?? self.path else {
             // Nil path is valid case if we want to skip path
             next?.performActionInContext(context)

@@ -20,7 +20,7 @@ import Foundation
  */
 final public class DrawSplit : DrawAction {
 
-    private let split: DrawAction
+    fileprivate let split: DrawAction
     
     /**
      Initializes a DrawSplit with the specified chain
@@ -42,7 +42,7 @@ final public class DrawSplit : DrawAction {
         self.add(next)
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         split.performActionInContext(context)
         next?.performActionInContext(context)
     }

@@ -12,10 +12,10 @@ import CoreGraphics
 final public class DrawBorderGradient : DrawAction {
 
 
-    private let colors: [UIColor]
-    private let lineWidth: CGFloat
-    private let inset: CGFloat
-    private let horizontal: Bool
+    fileprivate let colors: [UIColor]
+    fileprivate let lineWidth: CGFloat
+    fileprivate let inset: CGFloat
+    fileprivate let horizontal: Bool
     
     /**
      Initializes a DrawBorderGradient
@@ -53,7 +53,7 @@ final public class DrawBorderGradient : DrawAction {
         self.init(colors: colors, lineWidth: 1.0, inset: 0.0)
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         guard let path = context.path else {
             assert(false, "No path provided for border gradient draw action")
             return
@@ -61,16 +61,16 @@ final public class DrawBorderGradient : DrawAction {
 
         context.performDrawActions {
             let pathBounds = path.bounds
-            var insetTransform = CGAffineTransformIdentity
+            var insetTransform = CGAffineTransform.identity
             if inset != 0 {
-                insetTransform = CGAffineTransformTranslate(insetTransform, pathBounds.midX, pathBounds.midY)
-                insetTransform = CGAffineTransformScale(insetTransform, (pathBounds.width - inset * 2) / pathBounds.width, (pathBounds.height - inset * 2) / pathBounds
+                insetTransform = insetTransform.translatedBy(x: pathBounds.midX, y: pathBounds.midY)
+                insetTransform = insetTransform.scaledBy(x: (pathBounds.width - inset * 2) / pathBounds.width, y: (pathBounds.height - inset * 2) / pathBounds
                 .height)
-                insetTransform = CGAffineTransformTranslate(insetTransform, -pathBounds.midX, -pathBounds.midY)
+                insetTransform = insetTransform.translatedBy(x: -pathBounds.midX, y: -pathBounds.midY)
             }
 
-            let insetPath = CGPathCreateCopyByStrokingPath(path.CGPath, &insetTransform, lineWidth, .Butt, .Miter, 1.0)!
-            context.path = UIBezierPath(CGPath: insetPath)
+            let insetPath = CGPath(__byStroking: path.cgPath, transform: &insetTransform, lineWidth: lineWidth, lineCap: .butt, lineJoin: .miter, miterLimit: 1.0)!
+            context.path = UIBezierPath(cgPath: insetPath)
 
             // Reuse other actions to clip/gradient with new path
             DrawClip().add(DrawGradient(colors: colors, horizontal: horizontal)).performActionInContext(context)

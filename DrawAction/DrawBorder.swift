@@ -11,9 +11,9 @@ import Foundation
  Action that strokes a border on the current rect or path
 */
 final public class DrawBorder : DrawAction {
-    private let color: UIColor
-    private let lineWidth: CGFloat
-    private let dashedLineLengths: [CGFloat]?
+    fileprivate let color: UIColor
+    fileprivate let lineWidth: CGFloat
+    fileprivate let dashedLineLengths: [CGFloat]?
 
     /**
      Initializes a DrawBorder
@@ -49,24 +49,22 @@ final public class DrawBorder : DrawAction {
         self.init(color: color, lineWidth: lineWidth, dashedLineLengths: nil)
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         context.performGraphicsActions { gContext in
-            CGContextSetLineWidth(gContext, lineWidth)
-            CGContextSetStrokeColorWithColor(gContext, color.CGColor)
+            gContext.setLineWidth(lineWidth)
+            gContext.setStrokeColor(color.cgColor)
 
             let strokeClosure = {
                 if context.addPathToGraphicsContext() {
-                    CGContextStrokePath(gContext)
+                    gContext.strokePath()
                 } else {
-                    CGContextStrokeRect(gContext, context.rect)
+                    gContext.stroke(context.rect)
                 }
             }
 
             if let lineLengths = dashedLineLengths {
-                lineLengths.withUnsafeBufferPointer { pointer in
-                    CGContextSetLineDash(gContext, 0, pointer.baseAddress, pointer.count)
-                    strokeClosure()
-                }
+                gContext.setLineDash(phase: 0, lengths: lineLengths)
+                strokeClosure()
             } else {
                 strokeClosure()
             }

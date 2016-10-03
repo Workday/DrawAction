@@ -10,7 +10,7 @@ import Foundation
 /// Action that sets the opacity of subsequent draw actions. Useful when you want to apply transparency to an entire chain of draw actions without modifying the involved colors.
 final public class DrawAlpha : DrawAction {
 
-    private let alpha: CGFloat
+    fileprivate let alpha: CGFloat
     /**
      Initializes a DrawAlpha
      
@@ -21,9 +21,9 @@ final public class DrawAlpha : DrawAction {
         super.init()
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         context.performDrawAndGraphicsActions { gContext in
-            CGContextSetAlpha(gContext, alpha);
+            gContext.setAlpha(alpha);
             next?.performActionInContext(context)
         }
     }

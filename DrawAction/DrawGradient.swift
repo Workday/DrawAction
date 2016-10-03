@@ -10,21 +10,21 @@ import Foundation
 /// Action that draws a linear or radial gradient in the current rect
 final public class DrawGradient : DrawAction {
 
-    private let cgColors: [CGColorRef]
-    private let locations: [CGFloat]?
-    private var extendEdges: Bool = false
+    fileprivate let cgColors: [CGColor]
+    fileprivate let locations: [CGFloat]?
+    fileprivate var extendEdges: Bool = false
 
     // Linear
-    private let startPoint: CGPoint
-    private let endPoint: CGPoint
+    fileprivate let startPoint: CGPoint
+    fileprivate let endPoint: CGPoint
 
     // Radial
-    private let radial: Bool
-    private let startRadius: CGFloat
-    private let endRadius: CGFloat
+    fileprivate let radial: Bool
+    fileprivate let startRadius: CGFloat
+    fileprivate let endRadius: CGFloat
 
     // Cache of draw objects
-    private var gradientCache: CGGradientRef? = nil
+    fileprivate var gradientCache: CGGradient? = nil
 
     // MARK: Linear initializers
 
@@ -106,8 +106,8 @@ final public class DrawGradient : DrawAction {
         self.extendEdges = extendEdges
 
         radial = true
-        startPoint = CGPointZero
-        endPoint = CGPointZero
+        startPoint = CGPoint.zero
+        endPoint = CGPoint.zero
         super.init()
     }
     
@@ -136,15 +136,15 @@ final public class DrawGradient : DrawAction {
 
     // MARK:
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         if gradientCache == nil {
             let colorSpace = CGColorSpaceCreateDeviceRGB()
             if let locations = locations {
                 locations.withUnsafeBufferPointer { locationBuffer in
-                    gradientCache = CGGradientCreateWithColors(colorSpace, cgColors, locationBuffer.baseAddress)
+                    gradientCache = CGGradient(colorsSpace: colorSpace, colors: cgColors as CFArray, locations: locationBuffer.baseAddress)
                 }
             } else {
-                gradientCache = CGGradientCreateWithColors(colorSpace, cgColors, nil)
+                gradientCache = CGGradient(colorsSpace: colorSpace, colors: cgColors as CFArray, locations: nil)
             }
         }
 
@@ -155,23 +155,23 @@ final public class DrawGradient : DrawAction {
 
         let rect = context.rect
         
-        let options: CGGradientDrawingOptions = extendEdges ? [.DrawsBeforeStartLocation, .DrawsAfterEndLocation] : []
+        let options: CGGradientDrawingOptions = extendEdges ? [.drawsBeforeStartLocation, .drawsAfterEndLocation] : []
 
         if radial {
             let center = CGPoint(x: rect.midX, y: rect.midY)
             let minDimension = min(rect.width, rect.height) / 2
-            CGContextDrawRadialGradient(context.graphicsContext, gradient, center, startRadius * minDimension, center, endRadius * minDimension, options)
+            context.graphicsContext.drawRadialGradient(gradient, startCenter: center, startRadius: startRadius * minDimension, endCenter: center, endRadius: endRadius * minDimension, options: options)
         } else {
             let start = pointInRect(rect, fromNormalizedPoint: startPoint)
             let end = pointInRect(rect, fromNormalizedPoint: endPoint)
-            CGContextDrawLinearGradient(context.graphicsContext, gradient, start, end, options)
+            context.graphicsContext.drawLinearGradient(gradient, start: start, end: end, options: options)
         }
         next?.performActionInContext(context)
     }
 
     // MARK: Helpers
 
-    private func pointInRect(rect: CGRect, fromNormalizedPoint point: CGPoint) -> CGPoint {
+    fileprivate func pointInRect(_ rect: CGRect, fromNormalizedPoint point: CGPoint) -> CGPoint {
         var newPoint = CGPoint()
         newPoint.x = rect.minX + rect.width*point.x
         newPoint.y = rect.minY + rect.height*point.y
@@ -179,8 +179,8 @@ final public class DrawGradient : DrawAction {
     }
 
     // class function so we don't break the swift initializer contract
-    private class func cgColorsFromUIColors(colors: [UIColor]) -> [CGColorRef] {
-        return colors.map{ $0.CGColor }
+    fileprivate class func cgColorsFromUIColors(_ colors: [UIColor]) -> [CGColor] {
+        return colors.map{ $0.cgColor }
     }
 }
 

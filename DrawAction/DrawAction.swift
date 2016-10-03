@@ -8,9 +8,9 @@
 import Foundation
 
 /// Abstract superclass for all actions. By default does nothing other than forward context onto the next action.
-@objc public class DrawAction : NSObject {
+@objc open class DrawAction : NSObject {
 
-    private(set) var next: DrawAction?
+    fileprivate(set) var next: DrawAction?
 
     override public init()  {}
 
@@ -19,7 +19,7 @@ import Foundation
      
      - parameter actions:  Array of actions. For each item in the array, it is added to the previous
      */
-    final public class func chainActions(actions: [DrawAction]) -> DrawAction {
+    final public class func chainActions(_ actions: [DrawAction]) -> DrawAction {
         guard var finalAction = actions.first else {
             fatalError("Cannot chain an empty array of actions!")
         }
@@ -36,7 +36,7 @@ import Foundation
      
      - parameter newNext: The action to add to the chain
     */
-    public func add(newNext: DrawAction) -> DrawAction {
+    @discardableResult open func add(_ newNext: DrawAction) -> DrawAction {
         if let next = next {
             next.add(newNext)
         } else {
@@ -51,7 +51,7 @@ import Foundation
      - parameter rect: The rect to initialize the action chain with
      - parameter context: The CGContext to perform the draw operations in.
      */
-    public func drawRect(rect: CGRect, inContext context: CGContextRef?) {
+    open func drawRect(_ rect: CGRect, inContext context: CGContext?) {
         guard let context = context else {
             assertionFailure("Told to draw in a nil context!")
             return
@@ -62,29 +62,29 @@ import Foundation
 
     // MARK: Subclass methods
 
-    func performActionInContext(context: DrawContext) {
+    func performActionInContext(_ context: DrawContext) {
         next?.performActionInContext(context)
     }
 }
 
 class DrawContext {
-    let graphicsContext: CGContextRef
+    let graphicsContext: CGContext
     var rect: CGRect
     var path: UIBezierPath?
 
-    private var contextStack: [(CGRect, UIBezierPath?)] = []
+    fileprivate var contextStack: [(CGRect, UIBezierPath?)] = []
 
-    init(graphicsContext: CGContextRef, rect: CGRect) {
+    init(graphicsContext: CGContext, rect: CGRect) {
         self.graphicsContext = graphicsContext
         self.rect = rect
     }
 
-    private func saveState() {
+    fileprivate func saveState() {
         let currentValue = (rect, path)
         contextStack.append(currentValue)
     }
 
-    private func restoreState() {
+    fileprivate func restoreState() {
         guard let (rect, path) = contextStack.popLast() else {
             assert(false, "Unbalanced calls to saveState / restoreState")
             return
@@ -95,25 +95,25 @@ class DrawContext {
     }
 
     // Performs 'action' inside a save/restore of the draw context (which tracks the current rect/path of the draw)
-    func performDrawActions(@noescape action: Void -> Void) {
+    func performDrawActions(_ action: (Void) -> Void) {
         saveState()
         action()
         restoreState()
     }
 
     // Performs 'action' inside a CGContext save/restore state batch, passing in the context for convenience
-    func performGraphicsActions(@noescape action: CGContextRef -> Void) {
-        CGContextSaveGState(graphicsContext)
+    func performGraphicsActions(_ action: (CGContext) -> Void) {
+        graphicsContext.saveGState()
         action(graphicsContext)
-        CGContextRestoreGState(graphicsContext)
+        graphicsContext.restoreGState()
     }
 
     // Combines the two above for one closure for both save/restores
-    func performDrawAndGraphicsActions(@noescape action: CGContextRef -> Void) {
+    func performDrawAndGraphicsActions(_ action: (CGContext) -> Void) {
         saveState()
-        CGContextSaveGState(graphicsContext)
+        graphicsContext.saveGState()
         action(graphicsContext)
-        CGContextRestoreGState(graphicsContext)
+        graphicsContext.restoreGState()
         restoreState()
     }
 
@@ -123,14 +123,14 @@ class DrawContext {
             return false
         }
 
-        CGContextSaveGState(graphicsContext)
-        CGContextTranslateCTM(graphicsContext, rect.minX, rect.minY)
-        CGContextAddPath(graphicsContext, path.CGPath)
-        CGContextRestoreGState(graphicsContext)
+        graphicsContext.saveGState()
+        graphicsContext.translateBy(x: rect.minX, y: rect.minY)
+        graphicsContext.addPath(path.cgPath)
+        graphicsContext.restoreGState()
         return true
     }
 
     func addRectToGraphicsContext() {
-        CGContextAddRect(graphicsContext, rect)
+        graphicsContext.addRect(rect)
     }
 }

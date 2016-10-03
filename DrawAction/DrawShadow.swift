@@ -10,9 +10,9 @@ import Foundation
 /// Action that defines a shadow to apply to all future draw actions
 final public class DrawShadow : DrawAction {
 
-    private let color: UIColor
-    private let blur: CGFloat
-    private let offset: CGSize
+    fileprivate let color: UIColor
+    fileprivate let blur: CGFloat
+    fileprivate let offset: CGSize
     
     /**
      Initializes a DrawShadow
@@ -27,9 +27,9 @@ final public class DrawShadow : DrawAction {
         self.offset = offset
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         context.performGraphicsActions { gContext in
-            CGContextSetShadowWithColor(gContext, offset, blur, color.CGColor)
+            gContext.setShadow(offset: offset, blur: blur, color: color.cgColor)
             next?.performActionInContext(context)
         }
     }

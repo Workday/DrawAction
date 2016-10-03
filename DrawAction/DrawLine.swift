@@ -13,9 +13,9 @@ import Foundation
  */
 final public class DrawLine : DrawAction {
 
-    private let color: UIColor
-    private let lineWidth: CGFloat
-    private let points: [CGPoint]
+    fileprivate let color: UIColor
+    fileprivate let lineWidth: CGFloat
+    fileprivate let points: [CGPoint]
     
     /**
      Initializes a DrawLine
@@ -36,7 +36,7 @@ final public class DrawLine : DrawAction {
      Initializes a DrawLine. Equivalent initializer to `init(points:color:lineWidth)`, but takes an array of NSValues containing CGPoints. For objective-c compatibility
      */
     convenience public init(boxedPoints: [NSValue], color: UIColor, lineWidth: CGFloat) {
-        self.init(points: boxedPoints.map{$0.CGPointValue()}, color: color, lineWidth: lineWidth)
+        self.init(points: boxedPoints.map{$0.cgPointValue}, color: color, lineWidth: lineWidth)
     }
 
     /**
@@ -63,21 +63,18 @@ final public class DrawLine : DrawAction {
         self.init(startPoint: startPoint, endPoint: endPoint, color: color, lineWidth: 1)
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         context.performGraphicsActions { gContext in
-            CGContextSetLineCap(gContext, .Square)
-            CGContextSetStrokeColorWithColor(gContext, color.CGColor)
-            CGContextSetLineWidth(gContext, lineWidth)
-
-            let rectPoints = pointArrayForUnitPoints(points, inRect: context.rect)
-            rectPoints.withUnsafeBufferPointer { pBuffer in
-                CGContextStrokeLineSegments(gContext, pBuffer.baseAddress, pBuffer.count)
-            }
+            gContext.setLineCap(.square)
+            gContext.setStrokeColor(color.cgColor)
+            gContext.setLineWidth(lineWidth)
+            let convertedPoints = pointArrayForUnitPoints(points, inRect: context.rect)
+            gContext.strokeLineSegments(between: convertedPoints)
         }
         next?.performActionInContext(context)
     }
 
-    private func pointArrayForUnitPoints(points: [CGPoint], inRect rect: CGRect) -> [CGPoint] {
+    fileprivate func pointArrayForUnitPoints(_ points: [CGPoint], inRect rect: CGRect) -> [CGPoint] {
         var rect = rect
         rect.size.width -= lineWidth
         rect.size.height -= lineWidth

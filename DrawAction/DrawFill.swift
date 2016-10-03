@@ -10,8 +10,8 @@ import Foundation
 /// Action that performs a fill on the current path or rect
 final public class DrawFill : DrawAction {
 
-    private let color: UIColor
-    private let blendMode: CGBlendMode
+    fileprivate let color: UIColor
+    fileprivate let blendMode: CGBlendMode
     
     /**
      Initializes a DrawFill
@@ -31,17 +31,17 @@ final public class DrawFill : DrawAction {
      
      */
     public convenience init(color: UIColor) {
-        self.init(color: color, blendMode: .Normal)
+        self.init(color: color, blendMode: .normal)
     }
 
-    override func performActionInContext(context: DrawContext) {
+    override func performActionInContext(_ context: DrawContext) {
         context.performGraphicsActions { gContext in
-            CGContextSetBlendMode(gContext, blendMode)
-            CGContextSetFillColorWithColor(gContext, color.CGColor)
+            gContext.setBlendMode(blendMode)
+            gContext.setFillColor(color.cgColor)
             if context.addPathToGraphicsContext() {
-                CGContextFillPath(gContext)
+                gContext.fillPath()
             } else {
-                CGContextFillRect(gContext, context.rect)
+                gContext.fill(context.rect)
             }
         }
         next?.performActionInContext(context)
