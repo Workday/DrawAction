@@ -77,7 +77,7 @@ final public class DrawDivide : DrawAction {
         (sliceRect, remainderRect) = context.rect.divided(atDistance: amount, from: edge)
         
         if self.padding > 0 {
-            (_, remainderRect) = context.rect.divided(atDistance: padding, from: edge)
+            (_, remainderRect) = remainderRect.divided(atDistance: padding, from: edge)
         }
         
         context.performDrawActions {
