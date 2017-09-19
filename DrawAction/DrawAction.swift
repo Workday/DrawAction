@@ -95,7 +95,7 @@ class DrawContext {
     }
 
     // Performs 'action' inside a save/restore of the draw context (which tracks the current rect/path of the draw)
-    func performDrawActions(_ action: (Void) -> Void) {
+    func performDrawActions(_ action: () -> Void) {
         saveState()
         action()
         restoreState()
