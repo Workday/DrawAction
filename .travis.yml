@@ -2,3 +2,7 @@ language: objective-c
 osx_image: xcode8
 script:
     - xcodebuild build -scheme DrawActionExample -sdk iphonesimulator
+matrix:
+    include:
+        - osx_image: xcode8
+        - osx_image: xcode9
