@@ -49,11 +49,11 @@ final public class DrawText : DrawAction {
         paragraphStyle.lineBreakMode = lineBreakMode
         paragraphStyle.alignment = alignment
         
-        let attributes: [String : AnyObject] = [
-            NSFontAttributeName : font,
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSForegroundColorAttributeName: color,
-            NSUnderlineStyleAttributeName: underlineStyle.rawValue as AnyObject
+        let attributes: [NSAttributedString.Key : AnyObject] = [
+            NSAttributedString.Key.font : font,
+            NSAttributedString.Key.paragraphStyle: paragraphStyle,
+            NSAttributedString.Key.foregroundColor : color,
+            NSAttributedString.Key.underlineStyle : underlineStyle.rawValue as AnyObject
         ]
         
         self.init(attributedText: NSAttributedString(string: text, attributes: attributes))
@@ -69,7 +69,7 @@ final public class DrawText : DrawAction {
      - parameter lineBreakMode: Line break mode to use when rendering
      */
     convenience public init(text: String, font: UIFont, color: UIColor, alignment: NSTextAlignment, lineBreakMode: NSLineBreakMode) {
-        self.init(text: text, font: font, color: color, alignment: alignment, lineBreakMode: lineBreakMode, underlineStyle: .styleNone)
+        self.init(text: text, font: font, color: color, alignment: alignment, lineBreakMode: lineBreakMode, underlineStyle: [])
     }
     
     /**
