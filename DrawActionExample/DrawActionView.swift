@@ -64,7 +64,7 @@ class DrawActionView: UIView {
         
         // White text with shadow
         let textAction = DrawShadow(color: UIColor.black, blur: 0, offset: CGSize(width: 1, height: 1)).add(
-            DrawText(text: "Hello World", font: UIFont.preferredFont(forTextStyle: UIFont.TextStyle.body), color: UIColor.white, alignment: .center, lineBreakMode: .byTruncatingTail))
+            DrawText(text: "Hello World", font: UIFont.preferredFont(forTextStyle: .body), color: UIColor.white, alignment: .center, lineBreakMode: .byTruncatingTail))
         
         let drawSize = CGSize(width: 100, height: 30)
         let drawRect = CGRect(origin: CGPoint(x: rect.midX - drawSize.width/2, y: rect.midY - drawSize.height/2), size: drawSize)

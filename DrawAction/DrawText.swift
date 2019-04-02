@@ -50,10 +50,10 @@ final public class DrawText : DrawAction {
         paragraphStyle.alignment = alignment
         
         let attributes: [NSAttributedString.Key : AnyObject] = [
-            NSAttributedString.Key.font : font,
-            NSAttributedString.Key.paragraphStyle: paragraphStyle,
-            NSAttributedString.Key.foregroundColor : color,
-            NSAttributedString.Key.underlineStyle : underlineStyle.rawValue as AnyObject
+            .font : font,
+            .paragraphStyle: paragraphStyle,
+            .foregroundColor : color,
+            .underlineStyle : underlineStyle.rawValue as AnyObject
         ]
         
         self.init(attributedText: NSAttributedString(string: text, attributes: attributes))
