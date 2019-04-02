@@ -11,7 +11,7 @@ import Foundation
 final public class DrawImage : DrawAction {
 
     fileprivate let image: UIImage
-    fileprivate let contentMode: UIViewContentMode
+    fileprivate let contentMode: UIView.ContentMode
     fileprivate let blendMode: CGBlendMode
     fileprivate let alpha: CGFloat
 
@@ -25,7 +25,7 @@ final public class DrawImage : DrawAction {
      - parameter blendMode: The `CGBlendMode` to use when drawing the image
      - parameter alpha: The alpha to apply to the image while drawing
      */
-    public init(image: UIImage, contentMode: UIViewContentMode, blendMode: CGBlendMode, alpha: CGFloat) {
+    public init(image: UIImage, contentMode: UIView.ContentMode, blendMode: CGBlendMode, alpha: CGFloat) {
         self.image = image
         self.contentMode = contentMode
         self.blendMode = blendMode
@@ -40,7 +40,7 @@ final public class DrawImage : DrawAction {
      - parameter image: The image to draw
      - parameter contentMode: The content mode to respect when performing the draw operation. Behavior is undefined if passed `.Redraw`
      */
-    convenience public init(image: UIImage, contentMode: UIViewContentMode) {
+    convenience public init(image: UIImage, contentMode: UIView.ContentMode) {
         self.init(image: image, contentMode: contentMode, blendMode: .normal, alpha: 1)
     }
 
@@ -51,7 +51,7 @@ final public class DrawImage : DrawAction {
      - parameter tint: The tint color to render with
      - parameter contentMode: The content mode to respect when performing the draw operation. Behavior is undefined if passed `.Redraw`
      */
-    public init(image: UIImage, tint: UIColor, contentMode: UIViewContentMode) {
+    public init(image: UIImage, tint: UIColor, contentMode: UIView.ContentMode) {
         self.image = image
         self.contentMode = contentMode
         self.blendMode = .normal
@@ -104,7 +104,7 @@ final public class DrawImage : DrawAction {
         return CGRect(origin: newOrigin, size: newSize).integral
     }
     
-    fileprivate func rectForSize(_ size: CGSize, inRect rect: CGRect, contentMode: UIViewContentMode) -> CGRect {
+    fileprivate func rectForSize(_ size: CGSize, inRect rect: CGRect, contentMode: UIView.ContentMode) -> CGRect {
         guard contentMode != .scaleToFill else {
             return rect
         }

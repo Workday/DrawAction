@@ -45,7 +45,7 @@ final public class DrawInset : DrawAction {
 
     override func performActionInContext(_ context: DrawContext) {
         context.performDrawActions {
-            context.rect = UIEdgeInsetsInsetRect(context.rect, insets)
+            context.rect = context.rect.inset(by: insets)
             next?.performActionInContext(context)
         }
     }
