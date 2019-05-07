@@ -8,7 +8,7 @@
 import Foundation
 
 /// Abstract superclass for all actions. By default does nothing other than forward context onto the next action.
-@objc open class DrawAction : NSObject {
+@objcMembers open class DrawAction : NSObject {
 
     fileprivate(set) var next: DrawAction?
 
